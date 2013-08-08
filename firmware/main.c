@@ -35,8 +35,9 @@ int main(void) {
 	
 	//char string[15];
 	unsigned char *string = "squirrel man";
+	while(1) {
 	send_string(string);
-
+	}
 	
 	 return(0);
 }
@@ -53,8 +54,6 @@ void send_string(unsigned char* string){
 	for(i = 0; i < numChars; i++) {
 			pos=i+1;
 			send_character(pos, string[i]);
-			
-			_delay_ms(150);
 	}
 }
 
@@ -67,7 +66,6 @@ void send_character(unsigned char position, unsigned char letter){
 	
 	halfChar = letter << 4;
 	halfChar = halfChar >> 4;
-	_delay_ms(150);
 	send_nibble(1,halfChar);
 }
 	
