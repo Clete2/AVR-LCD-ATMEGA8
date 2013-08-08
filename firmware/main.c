@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <util/delay.h>
 #include <stdio.h>
+#include <string.h>
 
 //Define functions
 //==========================================================
@@ -29,12 +30,12 @@ int main(void) {
 	add_character(0b00000000, &smileyFace[0]);*/
 	
 	lcd_finish_init();
-
-	send_character(0b000000, "a");
+	
+	//send_character(0b000000, 'a');
 	
 	//char string[15];
-	//unsigned char string[] = "squirrel man";
-	//send_string(string);
+	unsigned char *string = "squirrelman";
+	send_string(string);
 
 	
 	 return(0);
@@ -45,9 +46,8 @@ int main(void) {
 //// could use additional checks around the max size of the array, given a specific LCD
 //// 
 */
-void send_string(unsigned char string[]){
-	int numChars = sizeof(string) / sizeof(string[0]);
-	
+void send_string(unsigned char* string){
+	short numChars = strlen(string);
 	short i;
 	short pos;
 	for(i = 0; i < numChars; i++) {
@@ -63,12 +63,12 @@ void send_string(unsigned char string[]){
 //
 void send_character(unsigned char position, unsigned char letter){
 	unsigned char halfChar = letter >> 4;
-	send_nibble(0,halfChar);
+	send_nibble(1,halfChar);
 	
 	halfChar = letter << 4;
 	halfChar = halfChar >> 4;
-	_delay_ms(15);
-	send_nibble(0,halfChar);
+	_delay_ms(150);
+	send_nibble(1,halfChar);
 }
 	
 	
