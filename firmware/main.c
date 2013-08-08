@@ -34,7 +34,7 @@ int main(void) {
 	//send_character(0b000000, 'a');
 	
 	//char string[15];
-	unsigned char *string = "squirrelman";
+	unsigned char *string = "squirrel man";
 	send_string(string);
 
 	
