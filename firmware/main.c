@@ -10,7 +10,8 @@ void lcd_init(void);
 void lcd_finish_init(void);
 void add_character(unsigned char position, unsigned char * letter);
 void send_nibble(unsigned char __rs, unsigned char __data);
-
+void send_string(unsigned char string[]);
+void send_character(unsigned char position, unsigned char letter);
 //==========================================================
 
 int main(void) {	
@@ -28,41 +29,50 @@ int main(void) {
 	add_character(0b00000000, &smileyFace[0]);*/
 	
 	lcd_finish_init();
-	
-	unsigned char letter = 0b00110000; // Start at 0
-	while(1) {
-		if(!bit_is_clear(PIND,5)) { // Go to next letter
-			if(letter == 0b01111010) {
-				letter = 0b00110000;
-			}
-			
-			unsigned char temp = letter >> 4;
-			send_nibble(1,temp);
-			
-			temp = letter << 4;
-			temp = temp >> 4;
-			
-			send_nibble(1,temp);
-			_delay_ms(150);
-			letter++;
-			
-			// Keep on same square
-			send_nibble(0,0b0001);
-			send_nibble(0,0b0000);
-		}
-		
-		if(!bit_is_clear(PIND,6)) { // Space
-			_delay_ms(150);
 
-			send_nibble(0,0b0001);
-			send_nibble(0,0b0100);
-			letter = 0b00110000;
+	send_character(0b000000, "a");
+	
+	//char string[15];
+	//unsigned char string[] = "squirrel man";
+	//send_string(string);
+
+	
+	 return(0);
+}
+	
+	
+/*// Takes a string as input and loops through the char[] calling send character for each char
+//// could use additional checks around the max size of the array, given a specific LCD
+//// 
+*/
+void send_string(unsigned char string[]){
+	int numChars = sizeof(string) / sizeof(string[0]);
+	
+	short i;
+	short pos;
+	for(i = 0; i < numChars; i++) {
+			pos=i+1;
+			send_character(pos, string[i]);
 			
 			_delay_ms(150);
-		}
 	}
-    return(0);
 }
+
+//  Sends a single character to the LCD at a given position
+//  could use checks to be sure not to breach the max size of the LCD
+//
+void send_character(unsigned char position, unsigned char letter){
+	unsigned char halfChar = letter >> 4;
+	send_nibble(0,halfChar);
+	
+	halfChar = letter << 4;
+	halfChar = halfChar >> 4;
+	_delay_ms(15);
+	send_nibble(0,halfChar);
+}
+	
+	
+
 
 void io_init (void) {
     /*
