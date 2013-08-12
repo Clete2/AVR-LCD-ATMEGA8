@@ -13,7 +13,7 @@ void lcd_init(void);
 void lcd_finish_init(void);
 void add_character(unsigned char position, unsigned char * letter);
 void send_nibble(unsigned char __rs, unsigned char __data);
-void send_string(unsigned char string[]);
+void send_string(unsigned char *string);
 void send_character(unsigned char position, unsigned char letter);
 
 //==========================================================

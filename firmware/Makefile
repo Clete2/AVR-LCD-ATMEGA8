@@ -17,7 +17,7 @@
 DEVICE     = atmega8
 CLOCK      = 8000000
 PROGRAMMER = -c usbtiny -P usb
-OBJECTS    = main.o
+OBJECTS    = main.o AVR-LCD-lib.o
 FUSES      = -U hfuse:w:0xd9:m -U lfuse:w:0x24:m
 # ATMega8 fuse bits (fuse bits for other devices are different!):
 # Example for 8 MHz internal oscillator
@@ -63,7 +63,7 @@ AVRDUDE = avrdude $(PROGRAMMER) -p $(DEVICE)
 COMPILE = avr-gcc -Wall -Os -DF_CPU=$(CLOCK) -mmcu=$(DEVICE)
 
 # symbolic targets:
-all:	main.hex
+all:	main.hex AVR-LCD-lib.hex
 
 .c.o:
 	$(COMPILE) -c $< -o $@
@@ -92,12 +92,19 @@ load: all
 	bootloadHID main.hex
 
 clean:
-	rm -f main.hex main.elf $(OBJECTS)
+	rm -f main.hex main.elf AVR-LCD-lib.hex AVR-LCD-lib.elf $(OBJECTS)
 
 # file targets:
 main.elf: $(OBJECTS)
 	$(COMPILE) -o main.elf $(OBJECTS)
 
+AVR-LCD-lib.elf: $(OBJECTS)
+	$(COMPILE) -o AVR-LCD-lib.elf $(OBJECTS)
+
+AVR-LCD-lib.hex: AVR-LCD-lib.elf
+	rm -f AVR-LCD-lib.hex
+	avr-objcopy -j .text -j .data -O ihex AVR-LCD-lib.elf AVR-LCD-lib.hex
+	
 main.hex: main.elf
 	rm -f main.hex
 	avr-objcopy -j .text -j .data -O ihex main.elf main.hex
@@ -106,7 +113,7 @@ main.hex: main.elf
 
 # Targets for code debugging and analysis:
 disasm:	main.elf
-	avr-objdump -d main.elf
+	avr-objdump -d main.elf AVR-LCD-lib.elf
 
 cpp:
-	$(COMPILE) -E main.c
+	$(COMPILE) -E main.c AVR-LCD-lib.c
